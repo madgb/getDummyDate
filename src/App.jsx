@@ -45,12 +45,17 @@ class App extends Component {
     };
     toggleAnchor = () => {
         this.setState({
-            href: '',
+            href: "",
         });
     };
     render() {
         return (
             <div className="App">
+                <div>
+                    <h4>예상 시간</h4>
+                    <p>100,000건 - 20초</p>
+                    <p>200,000건 - 60초</p>
+                </div>
                 <form onSubmit={this.handleSaveToPC}>
                     <input
                         type="number"
