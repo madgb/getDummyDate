@@ -45,7 +45,7 @@ class App extends Component {
     };
     toggleAnchor = () => {
         this.setState({
-            down: false,
+            href: '',
         });
     };
     render() {
