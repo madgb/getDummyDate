@@ -6,7 +6,9 @@ export function getDummyUserData(len) {
         let user = {};
         user.user_id = stringGen(28);
         user.userReadable = getRandomUserReadable();
-        user.userWritable = getRandomUserWritable(randomStr(["male", "female"]));
+        user.userWritable = getRandomUserWritable(
+            randomStr(["male", "female"])
+        );
         user.userReadableMatching = getRandomUserReadableMatching();
         users.push(user);
     }
@@ -18,8 +20,8 @@ function getRandomUserReadable() {
     userReadableSkeleton.user_email = faker.internet.email();
     userReadableSkeleton.user_name = faker.name.findName();
     userReadableSkeleton.account_status = randomStr(["active", "deactivated"]);
-    userReadableSkeleton.account_creation_timestamp = randomGetNowTimeStamp();
-    userReadableSkeleton.last_login_timestamp = randomGetNowTimeStamp();
+    userReadableSkeleton.account_creation_timestamp = randomNumber(1580000000000, 1600000000000);
+    userReadableSkeleton.last_login_timestamp = randomNumber(1580000000000, 1600000000000);
     userReadableSkeleton.date_of_birth = faker.date
         .between("1981-01-01", "2001-12-31")
         .toISOString()
@@ -45,7 +47,7 @@ function getRandomUserReadable() {
     for (let i = 0; i < randomLoopNumber; i++) {
         let dataSet = {};
         dataSet.ratings_given_user = stringGen(28);
-        dataSet.event_timestamp = randomGetNowTimeStamp();
+        dataSet.event_timestamp = randomNumber(1580000000000, 1600000000000);
         dataSet.rating = randomNumber(0, 100) / 10;
         userReadableSkeleton.ratings.ratings_received.push(dataSet);
     }
@@ -318,7 +320,7 @@ function getRandomUserReadableMatching() {
             user_id: stringGen(28),
             is_premium_like: faker.random.boolean(),
             message: faker.lorem.sentence(),
-            event_timestamp: randomGetNowTimeStamp(),
+            event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
     }
 
@@ -328,7 +330,7 @@ function getRandomUserReadableMatching() {
             user_id: stringGen(28),
             is_premium_like: faker.random.boolean(),
             message: faker.lorem.sentence(),
-            event_timestamp: randomGetNowTimeStamp(),
+            event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
     }
 
@@ -338,7 +340,7 @@ function getRandomUserReadableMatching() {
             user_id: stringGen(28),
             is_premium_like: faker.random.boolean(),
             message: faker.lorem.sentence(),
-            event_timestamp: randomGetNowTimeStamp(),
+            event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
     }
 
@@ -347,7 +349,7 @@ function getRandomUserReadableMatching() {
         userReadableMatchingSkeleton.blocked_users.push({
             user_id: stringGen(28),
             reason: randomStr(["fake_account", "inappropriate_language"]),
-            event_timestamp: randomGetNowTimeStamp(),
+            event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
     }
 
@@ -360,7 +362,7 @@ function getRandomUserReadableMatching() {
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
         userReadableMatchingSkeleton.shown_users.push({
             user_id: stringGen(28),
-            event_timestamp: randomGetNowTimeStamp(),
+            event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
     }
 
@@ -373,7 +375,7 @@ function getRandomUserReadableMatching() {
             unread_count: "",
             profile_pic_path: "",
             matched_user_tier: "",
-            event_timestamp: randomGetNowTimeStamp(),
+            event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
     }
 
@@ -385,13 +387,6 @@ function randomStr(strArr, amount = 1) {
         .sort(() => Math.random() - Math.random())
         .slice(0, amount);
     return amount === 1 ? result[0] : result;
-}
-
-function randomGetNowTimeStamp() {
-    return (
-        Math.floor(Math.random() * (1600000000000 - 1580000000000)) +
-        1580000000000
-    );
 }
 
 function stringGen(len) {
