@@ -132,8 +132,8 @@ function getRandomUserWritable(gender) {
         userWritableSkeleton.body_shape = randomStr(["muscular", "skinny"]);
     }
     userWritableSkeleton.charm = randomStr(
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-        randomNumber(1, 13)
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        randomNumber(1, 5)
     );
     userWritableSkeleton.city = randomStr([
         "seoul",
@@ -182,7 +182,10 @@ function getRandomUserWritable(gender) {
         "college",
     ]);
     userWritableSkeleton.job_category = randomStr(["dummy", "job", "data"]);
-    userWritableSkeleton.mind = randomStr(["dummy", "mind", "data"]);
+    userWritableSkeleton.characteristics = randomStr(
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        randomNumber(1, 5)
+    );
     userWritableSkeleton.my_title = faker.lorem.sentence();
     userWritableSkeleton.nickname = faker.lorem.word();
     userWritableSkeleton.profession = randomStr([
@@ -191,13 +194,10 @@ function getRandomUserWritable(gender) {
         "data",
     ]);
     userWritableSkeleton.relationship_style = randomStr(
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-        randomNumber(1, 12)
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+        randomNumber(1, 5)
     );
-    userWritableSkeleton.religion = randomStr(
-        ["none", "christian", "catholic", "muslim", "buddhist", "hindoo"],
-        randomNumber(1, 6)
-    );
+    userWritableSkeleton.religion = randomStr(["none", "christian", "catholic", "buddhist"]);
     userWritableSkeleton.smoker = randomStr([0, 1, 2, 3]);
     if (gender === "male") {
         userWritableSkeleton.height = randomNumber(165, 195);
@@ -258,10 +258,7 @@ function getRandomUserWritable(gender) {
         "sejong",
         "busan",
     ]);
-    userWritableSkeleton.preferences.default_preferences.religion = randomStr(
-        ["none", "christian", "catholic", "muslim", "buddhist", "hindoo"],
-        randomNumber(1, 6)
-    );
+    userWritableSkeleton.preferences.default_preferences.religion = randomStr(["none", "christian", "catholic", "buddhist"]);
 
     //--purchased_preferences
     userWritableSkeleton.preferences.purchased_preferences = {};
@@ -305,7 +302,7 @@ function getRandomUserWritable(gender) {
     userWritableSkeleton.preferences.purchased_preferences.body_type.purchased = faker.random.boolean();
     userWritableSkeleton.preferences.purchased_preferences.body_type.body_type_list = randomStr(
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-        randomNumber(1, 12)
+        randomNumber(1, 5)
     );
 
     return userWritableSkeleton;
