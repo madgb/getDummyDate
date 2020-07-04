@@ -36,7 +36,7 @@ class App extends Component {
     };
     processDownload = () => {
         const fileData = JSON.stringify(getDummyUserData(this.state.val));
-        const blob = new Blob([fileData], { type: "json" });
+        const blob = new Blob([fileData], {type: "octet/stream"});
         const url = URL.createObjectURL(blob);
         this.setState({
             href: url,
@@ -69,7 +69,7 @@ class App extends Component {
                         rel="noopener noreferrer"
                         target="_blank"
                         href={this.state.href}
-                        download={`${this.state.val} users data`}
+                        download={`${this.state.val} users data.json`}
                         onClick={this.toggleAnchor}
                     >
                         DOWNLOAD
