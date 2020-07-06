@@ -1,21 +1,39 @@
 const faker = require("faker");
 
 export function getDummyUserData(len) {
+    let userData = createDummyUsers(len);
+
     let users = [];
     for (let i = 0; i < len; i++) {
         let user = {};
-        user.user_id = stringGen(28);
-        user.userReadable = getRandomUserReadable();
+        user.user_id = userData[i];
+        user.userReadable = getRandomUserReadable(userData, i);
         user.userWritable = getRandomUserWritable(
             randomStr(["male", "female"])
         );
-        user.userReadableMatching = getRandomUserReadableMatching();
+        user.userReadableMatching = getRandomUserReadableMatching(userData, i);
         users.push(user);
     }
     return users;
 }
 
-function getRandomUserReadable() {
+function createDummyUsers(len) {
+    let userData = [];
+    for(let j=0; j<len; j++) {
+        redundancyCheckAndPush(userData, stringGen(28));
+    }
+    return userData;
+}
+
+function redundancyCheckAndPush(userData, randomUser) {
+    if(userData.indexOf(randomUser) === -1) {
+        userData.push(randomUser);
+        return;
+    } 
+    return redundancyCheckAndPush(userData, stringGen(28));
+}
+
+function getRandomUserReadable(userData, meIdIdx) {
     let userReadableSkeleton = {};
     userReadableSkeleton.user_email = faker.internet.email();
     userReadableSkeleton.user_name = faker.name.findName();
@@ -43,13 +61,17 @@ function getRandomUserReadable() {
     userReadableSkeleton.ratings.average_rating = randomNumber(0, 100) / 10;
     userReadableSkeleton.ratings.ratings_given_count = randomNumber(0, 15);
     userReadableSkeleton.ratings.ratings_received = [];
-    const randomLoopNumber = randomNumber(0, 10);
-    for (let i = 0; i < randomLoopNumber; i++) {
+
+    let ratingGivenUserUniqueCheck = [];
+    ratingGivenUserUniqueCheck.push(meIdIdx);
+    for (let i = 0; i < 10; i++) {
         let dataSet = {};
-        dataSet.ratings_given_user = stringGen(28);
+        let uniqueIdx = getUniqueIdx(ratingGivenUserUniqueCheck, randomNumber(0, userData.length), userData);
+        dataSet.ratings_given_user = userData[uniqueIdx];
         dataSet.event_timestamp = randomNumber(1580000000000, 1600000000000);
         dataSet.rating = randomNumber(0, 100) / 10;
         userReadableSkeleton.ratings.ratings_received.push(dataSet);
+        ratingGivenUserUniqueCheck.push(uniqueIdx);
     }
 
     //verifications
@@ -308,65 +330,87 @@ function getRandomUserWritable(gender) {
     return userWritableSkeleton;
 }
 
-function getRandomUserReadableMatching() {
+function getRandomUserReadableMatching(userData, meIdIdx) {
     let userReadableMatchingSkeleton = {};
+    let uniqueCheckForm = [];
+    uniqueCheckForm.push(meIdIdx);
 
     userReadableMatchingSkeleton.acted_users = [];
+    let actedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
+        let uniqueIdx = getUniqueIdx(actedUserRedundancyCheck, randomNumber(0, userData.length), userData);
         userReadableMatchingSkeleton.acted_users.push({
-            user_id: stringGen(28),
+            user_id: userData[uniqueIdx],
             is_premium_like: faker.random.boolean(),
             message: faker.lorem.sentence(),
             event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
+        actedUserRedundancyCheck.push(uniqueIdx);
     }
 
     userReadableMatchingSkeleton.liked_users = [];
+    let likedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
+        let uniqueIdx = getUniqueIdx(likedUserRedundancyCheck, randomNumber(0, userData.length), userData);
         userReadableMatchingSkeleton.liked_users.push({
-            user_id: stringGen(28),
+            user_id: userData[uniqueIdx],
             is_premium_like: faker.random.boolean(),
             message: faker.lorem.sentence(),
             event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
+        likedUserRedundancyCheck.push(uniqueIdx);
     }
 
     userReadableMatchingSkeleton.rejected_users = [];
+    let rejectedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
+        let uniqueIdx = getUniqueIdx(rejectedUserRedundancyCheck, randomNumber(0, userData.length), userData);
         userReadableMatchingSkeleton.rejected_users.push({
-            user_id: stringGen(28),
+            user_id: userData[uniqueIdx],
             is_premium_like: faker.random.boolean(),
             message: faker.lorem.sentence(),
             event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
+        rejectedUserRedundancyCheck.push(uniqueIdx);
     }
 
     userReadableMatchingSkeleton.blocked_users = [];
+    let blockedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
+        let uniqueIdx = getUniqueIdx(blockedUserRedundancyCheck, randomNumber(0, userData.length), userData);
         userReadableMatchingSkeleton.blocked_users.push({
-            user_id: stringGen(28),
+            user_id: userData[randomNumber(0, userData.length)],
             reason: randomStr(["fake_account", "inappropriate_language"]),
             event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
+        blockedUserRedundancyCheck.push(uniqueIdx);
     }
 
     userReadableMatchingSkeleton.recommended_users = [];
+    let recommendedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        userReadableMatchingSkeleton.recommended_users.push(stringGen(28));
+        let uniqueIdx = getUniqueIdx(recommendedUserRedundancyCheck, randomNumber(0, userData.length), userData);
+        userReadableMatchingSkeleton.recommended_users.push(userData[uniqueIdx]);
+        recommendedUserRedundancyCheck.push(uniqueIdx);
     }
 
     userReadableMatchingSkeleton.shown_users = [];
+    let shownUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
+        let uniqueIdx = getUniqueIdx(shownUserRedundancyCheck, randomNumber(0, userData.length), userData);
         userReadableMatchingSkeleton.shown_users.push({
-            user_id: stringGen(28),
+            user_id: userData[uniqueIdx],
             event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
+        shownUserRedundancyCheck.push(uniqueIdx);
     }
 
     userReadableMatchingSkeleton.matched_users = [];
+    let matchedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
+        let uniqueIdx = getUniqueIdx(matchedUserRedundancyCheck, randomNumber(0, userData.length), userData);
         userReadableMatchingSkeleton.matched_users.push({
-            user_id: stringGen(28),
+            user_id: userData[uniqueIdx],
             last_message: "",
             last_message_ts: "",
             unread_count: "",
@@ -374,6 +418,7 @@ function getRandomUserReadableMatching() {
             matched_user_tier: "",
             event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
+        matchedUserRedundancyCheck.push(uniqueIdx);
     }
 
     return userReadableMatchingSkeleton;
@@ -397,4 +442,11 @@ function stringGen(len) {
 
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function getUniqueIdx(arr, idx, userData) {
+    if(arr.indexOf(idx) === -1) {
+        return idx;
+    }
+    return getUniqueIdx(arr, randomNumber(0, userData.length), userData);
 }
