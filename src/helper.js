@@ -2,35 +2,40 @@ const faker = require("faker");
 
 export function getDummyUserData(len) {
     let userData = createDummyUsers(len);
+    let process = true;
 
-    let users = [];
-    for (let i = 0; i < len; i++) {
-        let user = {};
-        user.user_id = userData[i];
-        user.userReadable = getRandomUserReadable(userData, i);
-        user.userWritable = getRandomUserWritable(
-            randomStr(["male", "female"])
-        );
-        user.userReadableMatching = getRandomUserReadableMatching(userData, i);
-        users.push(user);
+    if (new Set(userData).size !== parseInt(len)) {
+        const confirm = window.confirm("생성된 아이디들 중에 중복이 존재합니다. 계속 진행할까요?");
+        if (!confirm) {
+            process = false;
+        }
     }
-    return users;
+
+    if (process) {
+        let users = [];
+        for (let i = 0; i < len; i++) {
+            let user = {};
+            user.user_id = userData[i];
+            user.userReadable = getRandomUserReadable(userData, i);
+            user.userWritable = getRandomUserWritable(
+                randomStr(["male", "female"])
+            );
+            user.userReadableMatching = getRandomUserReadableMatching(userData, i);
+            users.push(user);
+        }
+        return users;
+    } else {
+        window.alert('페이지를 새로고침해주세요');
+    }
 }
 
 function createDummyUsers(len) {
     let userData = [];
-    for(let j=0; j<len; j++) {
-        redundancyCheckAndPush(userData, stringGen(28));
+    for (let j = 0; j < len; j++) {
+        const randomUser = stringGen(28);
+        userData.push(randomUser);
     }
     return userData;
-}
-
-function redundancyCheckAndPush(userData, randomUser) {
-    if(userData.indexOf(randomUser) === -1) {
-        userData.push(randomUser);
-        return;
-    } 
-    return redundancyCheckAndPush(userData, stringGen(28));
 }
 
 function getRandomUserReadable(userData, meIdIdx) {
@@ -445,7 +450,7 @@ function randomNumber(min, max) {
 }
 
 function getUniqueIdx(arr, idx, userData) {
-    if(arr.indexOf(idx) === -1) {
+    if (arr.indexOf(idx) === -1) {
         return idx;
     }
     return getUniqueIdx(arr, randomNumber(0, userData.length), userData);
