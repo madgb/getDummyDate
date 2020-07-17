@@ -1,8 +1,8 @@
 const faker = require("faker");
 
 export function getDummyUserData(len) {
-    let userData = createDummyUsers(len);
     let process = true;
+    let userData = createDummyUsers(len);
 
     if (new Set(userData).size !== parseInt(len)) {
         const confirm = window.confirm("생성된 아이디들 중에 중복이 존재합니다. 계속 진행할까요?");
@@ -12,21 +12,26 @@ export function getDummyUserData(len) {
     }
 
     if (process) {
-        let users = [];
-        for (let i = 0; i < len; i++) {
-            let user = {};
-            user.user_id = userData[i];
-            user.userReadable = getRandomUserReadable(userData, i);
-            user.userWritable = getRandomUserWritable(
-                randomStr(["male", "female"])
-            );
-            user.userReadableMatching = getRandomUserReadableMatching(userData, i);
-            users.push(user);
-        }
-        return users;
+        return createDummyUserData(len, userData);
     } else {
-        window.alert('페이지를 새로고침해주세요');
+        window.alert('페이지를 새로고침합니다. 다시 시도해주세요');
+        window.location.reload();
     }
+}
+
+function createDummyUserData(len, userData) {
+    let users = [];
+    for (let i = 0; i < len; i++) {
+        let user = {};
+        user.user_id = userData[i];
+        user.userReadable = getRandomUserReadable(userData, i);
+        user.userWritable = getRandomUserWritable(
+            randomStr(["male", "female"])
+        );
+        user.userReadableMatching = getRandomUserReadableMatching(userData, i);
+        users.push(user);
+    }
+    return users;
 }
 
 function createDummyUsers(len) {
