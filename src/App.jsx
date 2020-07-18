@@ -35,6 +35,7 @@ class App extends Component {
         }, 3000);
     };
     processDownload = () => {
+        console.log(getDummyUserData(this.state.val)[0])
         const fileData = JSON.stringify(getDummyUserData(this.state.val));
         const blob = new Blob([fileData], {type: "octet/stream"});
         const url = URL.createObjectURL(blob);

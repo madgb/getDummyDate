@@ -5,7 +5,9 @@ export function getDummyUserData(len) {
     let userData = createDummyUsers(len);
 
     if (new Set(userData).size !== parseInt(len)) {
-        const confirm = window.confirm("생성된 아이디들 중에 중복이 존재합니다. 계속 진행할까요?");
+        const confirm = window.confirm(
+            "생성된 아이디들 중에 중복이 존재합니다. 계속 진행할까요?"
+        );
         if (!confirm) {
             process = false;
         }
@@ -14,13 +16,16 @@ export function getDummyUserData(len) {
     if (process) {
         return createDummyUserData(len, userData);
     } else {
-        window.alert('페이지를 새로고침합니다. 다시 시도해주세요');
+        window.alert("페이지를 새로고침합니다. 다시 시도해주세요");
         window.location.reload();
     }
 }
 
 function createDummyUserData(len, userData) {
     let users = [];
+
+    const relationshipData = createRandomRelationship(userData.length);
+
     for (let i = 0; i < len; i++) {
         let user = {};
         user.user_id = userData[i];
@@ -28,9 +33,18 @@ function createDummyUserData(len, userData) {
         user.userWritable = getRandomUserWritable(
             randomStr(["male", "female"])
         );
-        user.userReadableMatching = getRandomUserReadableMatching(userData, i);
+        user.userReadableMatching = getRandomUserReadableMatching(
+            userData,
+            i,
+            relationshipData
+        );
         users.push(user);
     }
+    console.log(users[0].userReadableMatching.matched_users.length);
+    console.log(users[100].userReadableMatching.matched_users.length);
+    console.log(users[200].userReadableMatching.matched_users.length);
+    console.log(users[300].userReadableMatching.matched_users.length);
+    console.log(users[userData.length-1].userReadableMatching.matched_users.length);
     return users;
 }
 
@@ -48,8 +62,14 @@ function getRandomUserReadable(userData, meIdIdx) {
     userReadableSkeleton.user_email = faker.internet.email();
     userReadableSkeleton.user_name = faker.name.findName();
     userReadableSkeleton.account_status = randomStr(["active", "deactivated"]);
-    userReadableSkeleton.account_creation_timestamp = randomNumber(1580000000000, 1600000000000);
-    userReadableSkeleton.last_login_timestamp = randomNumber(1580000000000, 1600000000000);
+    userReadableSkeleton.account_creation_timestamp = randomNumber(
+        1580000000000,
+        1600000000000
+    );
+    userReadableSkeleton.last_login_timestamp = randomNumber(
+        1580000000000,
+        1600000000000
+    );
     userReadableSkeleton.date_of_birth = faker.date
         .between("1981-01-01", "2001-12-31")
         .toISOString()
@@ -76,7 +96,11 @@ function getRandomUserReadable(userData, meIdIdx) {
     ratingGivenUserUniqueCheck.push(meIdIdx);
     for (let i = 0; i < 10; i++) {
         let dataSet = {};
-        let uniqueIdx = getUniqueIdx(ratingGivenUserUniqueCheck, randomNumber(0, userData.length), userData);
+        let uniqueIdx = getUniqueIdx(
+            ratingGivenUserUniqueCheck,
+            randomNumber(0, userData.length),
+            userData
+        );
         dataSet.ratings_given_user = userData[uniqueIdx];
         dataSet.event_timestamp = randomNumber(1580000000000, 1600000000000);
         dataSet.rating = randomNumber(0, 100) / 10;
@@ -229,7 +253,12 @@ function getRandomUserWritable(gender) {
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
         randomNumber(1, 5)
     );
-    userWritableSkeleton.religion = randomStr(["none", "christian", "catholic", "buddhist"]);
+    userWritableSkeleton.religion = randomStr([
+        "none",
+        "christian",
+        "catholic",
+        "buddhist",
+    ]);
     userWritableSkeleton.smoker = randomStr([0, 1, 2, 3]);
     if (gender === "male") {
         userWritableSkeleton.height = randomNumber(165, 195);
@@ -290,7 +319,12 @@ function getRandomUserWritable(gender) {
         "sejong",
         "busan",
     ]);
-    userWritableSkeleton.preferences.default_preferences.religion = randomStr(["none", "christian", "catholic", "buddhist"]);
+    userWritableSkeleton.preferences.default_preferences.religion = randomStr([
+        "none",
+        "christian",
+        "catholic",
+        "buddhist",
+    ]);
 
     //--purchased_preferences
     userWritableSkeleton.preferences.purchased_preferences = {};
@@ -340,41 +374,85 @@ function getRandomUserWritable(gender) {
     return userWritableSkeleton;
 }
 
-function getRandomUserReadableMatching(userData, meIdIdx) {
+function getRandomUserReadableMatching(userData, meIdIdx, relationshipData) {
     let userReadableMatchingSkeleton = {};
     let uniqueCheckForm = [];
     uniqueCheckForm.push(meIdIdx);
 
+    const myData = relationshipData[meIdIdx];
     userReadableMatchingSkeleton.acted_users = [];
-    let actedUserRedundancyCheck = [...uniqueCheckForm];
-    for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        let uniqueIdx = getUniqueIdx(actedUserRedundancyCheck, randomNumber(0, userData.length), userData);
-        userReadableMatchingSkeleton.acted_users.push({
-            user_id: userData[uniqueIdx],
-            is_premium_like: faker.random.boolean(),
-            message: faker.lorem.sentence(),
-            event_timestamp: randomNumber(1580000000000, 1600000000000),
-        });
-        actedUserRedundancyCheck.push(uniqueIdx);
-    }
-
     userReadableMatchingSkeleton.liked_users = [];
-    let likedUserRedundancyCheck = [...uniqueCheckForm];
-    for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        let uniqueIdx = getUniqueIdx(likedUserRedundancyCheck, randomNumber(0, userData.length), userData);
-        userReadableMatchingSkeleton.liked_users.push({
-            user_id: userData[uniqueIdx],
-            is_premium_like: faker.random.boolean(),
-            message: faker.lorem.sentence(),
-            event_timestamp: randomNumber(1580000000000, 1600000000000),
+    userReadableMatchingSkeleton.matched_users = [];
+
+    if (myData) {
+        const matchDataIdx = Math.floor(myData.length * 0.8);
+        const likedDataIdx = Math.floor(myData.length * 0.9);
+        const matchData = myData.slice(0, matchDataIdx);
+        const likedData = myData.slice(matchDataIdx, likedDataIdx);
+        const actedData = myData.slice(likedDataIdx);
+
+        actedData.forEach((dataArr) => {
+            if (dataArr[1] === meIdIdx) {
+                userReadableMatchingSkeleton.acted_users.push({
+                    user_id: userData[dataArr[0]],
+                    last_message: "",
+                    last_message_ts: "",
+                    unread_count: "",
+                    profile_pic_path: "",
+                    matched_user_tier: "",
+                    event_timestamp: dataArr[2],
+                });
+            }
         });
-        likedUserRedundancyCheck.push(uniqueIdx);
+
+        likedData.forEach((dataArr) => {
+            if (dataArr[0] === meIdIdx) {
+                userReadableMatchingSkeleton.liked_users.push({
+                    user_id: userData[dataArr[1]],
+                    last_message: "",
+                    last_message_ts: "",
+                    unread_count: "",
+                    profile_pic_path: "",
+                    matched_user_tier: "",
+                    event_timestamp: dataArr[2],
+                });
+            }
+        });
+
+        matchData.forEach((dataArr) => {
+            if (dataArr[0] === meIdIdx) {
+                userReadableMatchingSkeleton.matched_users.push({
+                    user_id: userData[dataArr[1]],
+                    last_message: "",
+                    last_message_ts: "",
+                    unread_count: "",
+                    profile_pic_path: "",
+                    matched_user_tier: "",
+                    event_timestamp: dataArr[2],
+                });
+            }
+            if (dataArr[1] === meIdIdx) {
+                userReadableMatchingSkeleton.matched_users.push({
+                    user_id: userData[dataArr[0]],
+                    last_message: "",
+                    last_message_ts: "",
+                    unread_count: "",
+                    profile_pic_path: "",
+                    matched_user_tier: "",
+                    event_timestamp: dataArr[2],
+                });
+            }
+        });
     }
 
     userReadableMatchingSkeleton.rejected_users = [];
     let rejectedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        let uniqueIdx = getUniqueIdx(rejectedUserRedundancyCheck, randomNumber(0, userData.length), userData);
+        let uniqueIdx = getUniqueIdx(
+            rejectedUserRedundancyCheck,
+            randomNumber(0, userData.length),
+            userData
+        );
         userReadableMatchingSkeleton.rejected_users.push({
             user_id: userData[uniqueIdx],
             is_premium_like: faker.random.boolean(),
@@ -387,7 +465,11 @@ function getRandomUserReadableMatching(userData, meIdIdx) {
     userReadableMatchingSkeleton.blocked_users = [];
     let blockedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        let uniqueIdx = getUniqueIdx(blockedUserRedundancyCheck, randomNumber(0, userData.length), userData);
+        let uniqueIdx = getUniqueIdx(
+            blockedUserRedundancyCheck,
+            randomNumber(0, userData.length),
+            userData
+        );
         userReadableMatchingSkeleton.blocked_users.push({
             user_id: userData[randomNumber(0, userData.length)],
             reason: randomStr(["fake_account", "inappropriate_language"]),
@@ -399,36 +481,30 @@ function getRandomUserReadableMatching(userData, meIdIdx) {
     userReadableMatchingSkeleton.recommended_users = [];
     let recommendedUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        let uniqueIdx = getUniqueIdx(recommendedUserRedundancyCheck, randomNumber(0, userData.length), userData);
-        userReadableMatchingSkeleton.recommended_users.push(userData[uniqueIdx]);
+        let uniqueIdx = getUniqueIdx(
+            recommendedUserRedundancyCheck,
+            randomNumber(0, userData.length),
+            userData
+        );
+        userReadableMatchingSkeleton.recommended_users.push(
+            userData[uniqueIdx]
+        );
         recommendedUserRedundancyCheck.push(uniqueIdx);
     }
 
     userReadableMatchingSkeleton.shown_users = [];
     let shownUserRedundancyCheck = [...uniqueCheckForm];
     for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        let uniqueIdx = getUniqueIdx(shownUserRedundancyCheck, randomNumber(0, userData.length), userData);
+        let uniqueIdx = getUniqueIdx(
+            shownUserRedundancyCheck,
+            randomNumber(0, userData.length),
+            userData
+        );
         userReadableMatchingSkeleton.shown_users.push({
             user_id: userData[uniqueIdx],
             event_timestamp: randomNumber(1580000000000, 1600000000000),
         });
         shownUserRedundancyCheck.push(uniqueIdx);
-    }
-
-    userReadableMatchingSkeleton.matched_users = [];
-    let matchedUserRedundancyCheck = [...uniqueCheckForm];
-    for (let i = 0; i < randomNumber(0, randomNumber(1, 5)); i++) {
-        let uniqueIdx = getUniqueIdx(matchedUserRedundancyCheck, randomNumber(0, userData.length), userData);
-        userReadableMatchingSkeleton.matched_users.push({
-            user_id: userData[uniqueIdx],
-            last_message: "",
-            last_message_ts: "",
-            unread_count: "",
-            profile_pic_path: "",
-            matched_user_tier: "",
-            event_timestamp: randomNumber(1580000000000, 1600000000000),
-        });
-        matchedUserRedundancyCheck.push(uniqueIdx);
     }
 
     return userReadableMatchingSkeleton;
@@ -459,4 +535,43 @@ function getUniqueIdx(arr, idx, userData) {
         return idx;
     }
     return getUniqueIdx(arr, randomNumber(0, userData.length), userData);
+}
+
+function createRandomRelationship(len) {
+    let protoResult = [];
+    const arrLen = len * 50;
+    const min = Math.floor(len * 0.5);
+    for (let i = 0; i < arrLen; i++) {
+        protoResult.push(
+            JSON.stringify([
+                randomNumber(0, min),
+                randomNumber(min, len),
+                randomNumber(1580000000000, 1600000000000),
+            ])
+        );
+    }
+
+    const setResult = new Set(protoResult);
+    const clone = [...setResult];
+    const result = clone.map((e) => JSON.parse(e));
+    const sortedLen = result.sort((a, b) => a[0] - b[0]);
+    let hashMap = [];
+    sortedLen.forEach((e, i) => {
+        if (i % 2 === 0) {
+            if (!hashMap[e[0]]) {
+                hashMap[e[0]] = [];
+                hashMap[e[0]].push(e);
+            } else {
+                hashMap[e[0]].push(e);
+            }
+        } else {
+            if (!hashMap[e[1]]) {
+                hashMap[e[1]] = [];
+                hashMap[e[1]].push(e);
+            } else {
+                hashMap[e[1]].push(e);
+            }
+        }
+    });
+    return hashMap;
 }
