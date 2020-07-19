@@ -1,6 +1,12 @@
 const faker = require("faker");
 
 export function getDummyUserData(len) {
+    console.time("MyTimer");
+    window.timerStart = new Date();
+    const timerStartNode = document.createElement("p");
+    timerStartNode.textContent = 'Process start...';
+    document.getElementById('timer').appendChild(timerStartNode);
+
     let process = true;
     let userData = createDummyUsers(len);
 
@@ -36,15 +42,15 @@ function createDummyUserData(len, userData) {
         user.userReadableMatching = getRandomUserReadableMatching(
             userData,
             i,
-            relationshipData
+            relationshipData,
         );
         users.push(user);
     }
-    console.log(users[0].userReadableMatching.matched_users.length);
-    console.log(users[100].userReadableMatching.matched_users.length);
-    console.log(users[200].userReadableMatching.matched_users.length);
-    console.log(users[300].userReadableMatching.matched_users.length);
-    console.log(users[userData.length-1].userReadableMatching.matched_users.length);
+    // console.log(users[0].userReadableMatching.matched_users.length);
+    // console.log(users[100].userReadableMatching.matched_users.length);
+    // console.log(users[200].userReadableMatching.matched_users.length);
+    // console.log(users[300].userReadableMatching.matched_users.length);
+    // console.log(users[userData.length-1].userReadableMatching.matched_users.length);
     return users;
 }
 
@@ -54,6 +60,13 @@ function createDummyUsers(len) {
         const randomUser = stringGen(28);
         userData.push(randomUser);
     }
+
+    console.timeLog("MyTimer", "create dummy user IDs done");
+    const timerIDdone = new Date();
+    const abstract = (timerIDdone - window.timerStart);
+    const timerIDdoneNode = document.createElement("p");
+    timerIDdoneNode.textContent = `Create dummy user IDs done in ${abstract}ms`;
+    document.getElementById('timer').appendChild(timerIDdoneNode);
     return userData;
 }
 
@@ -573,5 +586,11 @@ function createRandomRelationship(len) {
             }
         }
     });
+    console.timeLog("MyTimer", "Ready to return relationship Hashmap");
+    const timerHashmapDone = new Date();
+    const abstract = (timerHashmapDone - window.timerStart);
+    const timerHashmapDoneNode = document.createElement("p");
+    timerHashmapDoneNode.textContent = `Create relationships Hashmap done in ${abstract}ms`;
+    document.getElementById('timer').appendChild(timerHashmapDoneNode);
     return hashMap;
 }
