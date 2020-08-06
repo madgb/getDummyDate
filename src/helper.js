@@ -94,7 +94,7 @@ function getRandomUserReadable(userData, meIdIdx) {
         .slice(0, 10);
     userReadableSkeleton.invitee_code = stringGen(6);
     userReadableSkeleton.device_OS = randomStr(["Android", "iOS"]);
-    userReadableSkeleton.tier = randomStr([0, 1, 2, 3, 4, 5, 6, 7]);
+    userReadableSkeleton.tier = randomStr([1, 2, 3, 4, 5, 6, 7]);
 
     //store
     userReadableSkeleton.store = {};
@@ -126,66 +126,57 @@ function getRandomUserReadable(userData, meIdIdx) {
 
     //-- appearances
     userReadableSkeleton.verifications.appearances = {};
-    userReadableSkeleton.verifications.appearances.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.appearances.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.appearances.images = [];
 
     //-- education
     userReadableSkeleton.verifications.education = {};
-    userReadableSkeleton.verifications.education.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.education.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.education.images = [];
 
     //-- profession
     userReadableSkeleton.verifications.profession = {};
-    userReadableSkeleton.verifications.profession.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.profession.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.profession.images = [];
 
     //-- wages
     userReadableSkeleton.verifications.wages = {};
-    userReadableSkeleton.verifications.wages.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.wages.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.wages.images = [];
 
     //-- personal_asset
     userReadableSkeleton.verifications.personal_asset = {};
-    userReadableSkeleton.verifications.personal_asset.tier = randomNumber(
-        0,
-        10
-    );
+    userReadableSkeleton.verifications.personal_asset.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.personal_asset.images = [];
 
     //-- company
     userReadableSkeleton.verifications.company = {};
-    userReadableSkeleton.verifications.company.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.company.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.company.images = [];
 
     //-- vehicle
     userReadableSkeleton.verifications.vehicle = {};
-    userReadableSkeleton.verifications.vehicle.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.vehicle.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.vehicle.images = [];
 
     //-- family_asset
     userReadableSkeleton.verifications.family_asset = {};
-    userReadableSkeleton.verifications.family_asset.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.family_asset.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.family_asset.images = [];
 
     //-- height
     userReadableSkeleton.verifications.height = {};
-    userReadableSkeleton.verifications.height.tier = randomNumber(0, 10);
+    userReadableSkeleton.verifications.height.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.height.images = [];
 
     //-- verified_account
     userReadableSkeleton.verifications.verified_account = {};
-    userReadableSkeleton.verifications.verified_account.tier = randomNumber(
-        0,
-        10
-    );
+    userReadableSkeleton.verifications.verified_account.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.verified_account.images = [];
 
     //-- family_job_title
     userReadableSkeleton.verifications.family_job_title = {};
-    userReadableSkeleton.verifications.family_job_title.tier = randomNumber(
-        0,
-        10
-    );
+    userReadableSkeleton.verifications.family_job_title.tier = randomNumber(1, 7);
     userReadableSkeleton.verifications.family_job_title.images = [];
 
     return userReadableSkeleton;
